@@ -46,13 +46,12 @@ public:
 
     double &operator[](int i) { return m_V[i]; }
 
-    double Length() const {
-        return std::sqrt(LengthSquared());
-    }
-
-private:
     double LengthSquared() const {
         return m_V[0] * m_V[0] + m_V[1] * m_V[1] + m_V[2] * m_V[2];
+    }
+
+    double Length() const {
+        return std::sqrt(LengthSquared());
     }
 
 private:
