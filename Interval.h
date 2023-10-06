@@ -8,6 +8,7 @@
 
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 #include "Utils.h"
 
@@ -24,6 +25,10 @@ public:
     }
     bool Surrounds(double value) const {
         return m_Min < value && value < m_Max;
+    }
+
+    double Clamp(double value) const {
+        return std::clamp(value, m_Min, m_Max);
     }
 
 private:

@@ -3,25 +3,24 @@
 //
 #include "Renderer.h"
 
-std::ofstream Renderer::m_Out; // 静态成员变量必须在类外初始化
-
-Renderer::Renderer() {
-    Renderer::m_Out.open("image.ppm");
+Renderer::Renderer(int samplesPerPixel) : m_SamplesPerPixel(samplesPerPixel) {
+    m_Out.open("image.ppm");
 }
 
 Renderer::~Renderer() {
-    Renderer::m_Out.close();
+    m_Out.close();
 }
 
 void Renderer::Render(int width, int height, Camera camera, const Hittable &world) {
-    Renderer::m_Out << "P3\n" << width << ' ' << height << "\n255\n";
+    m_Out << "P3\n" << width << ' ' << height << "\n255\n";
     for (int j = 0; j < height; ++j) {
         std::clog << "\rScanline's remaining: " << (height - j) << ' ' << std::flush;
         for (int i = 0; i < width; ++i) {
-            Point3 pixelCenter = camera.PixelOrigin() + i * camera.PixelDelta_X() + j * camera.PixelDelta_Y();
-            Vec3 rayDirection = Normalize(pixelCenter - camera.Origin());
-            Ray ray(camera.Origin(), rayDirection);
-            Color pixelColor = RayColor(ray, world);
+            Color pixelColor(0, 0, 0);
+            for (int s = 0; s < m_SamplesPerPixel; ++s) {
+                Ray ray = camera.GetRay(i, j);
+                pixelColor += RayColor(ray, world);
+            }
             WriteColor(pixelColor);
         }
     }
@@ -40,9 +39,20 @@ Color Renderer::RayColor(const Ray &ray, const Hittable &world) {
 }
 
 void Renderer::WriteColor(Color pixelColor) {
-    Renderer::m_Out << static_cast<int>(255.999 * pixelColor.x()) << ' '
-                    << static_cast<int>(255.999 * pixelColor.y()) << ' '
-                    << static_cast<int>(255.999 * pixelColor.z()) << '\n';
+    double r = pixelColor.x();
+    double g = pixelColor.y();
+    double b = pixelColor.z();
+
+    // Divide the color by the number of samples.
+    double scale = 1.0 / m_SamplesPerPixel;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+
+    static const Interval range(0.0, 0.999); // 限制颜色分量的范围在 [0, 1)
+    m_Out << static_cast<int>(256 * range.Clamp(r)) << ' '
+          << static_cast<int>(256 * range.Clamp(g)) << ' '
+          << static_cast<int>(256 * range.Clamp(b)) << '\n';
 
 }
 

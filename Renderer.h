@@ -14,17 +14,19 @@
 
 class Renderer {
 public:
-    Renderer();
+    Renderer() = default;
+    explicit Renderer(int samplesPerPixel);
     ~Renderer();
 
-    static void Render(int width, int height, Camera camera, const Hittable &world);
+    void Render(int width, int height, Camera camera, const Hittable &world);
 
 private:
     static Color RayColor(const Ray &ray, const Hittable &world);
-    static void WriteColor(Color pixelColor);
+    void WriteColor(Color pixelColor);
 
 private:
-    static std::ofstream m_Out;
+    std::ofstream m_Out;
+    int m_SamplesPerPixel; // 每个像素的采样次数
 };
 
 #endif //RAYTRACING_RENDERER_H

@@ -19,7 +19,8 @@ int main() {
     world.Add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100));
 
     // Render
-    Renderer::Render(imageWidth, imageHeight, camera, world);
+    Renderer renderer(100);
+    renderer.Render(imageWidth, imageHeight, camera, world);
 
     return 0;
 }

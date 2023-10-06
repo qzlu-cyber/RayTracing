@@ -2,6 +2,7 @@
 // Created by 94164 on 2023/10/6.
 //
 #include "Camera.h"
+#include "Utils.h"
 
 Camera::Camera(int width, int height) {
     // Image
@@ -24,6 +25,20 @@ Camera::Camera(int width, int height) {
     m_PixelDelta_Y = viewport_Y / m_Height; // 每个像素的高度
 
     // Calculate the location of the upper left pixel
-    Point3 viewportUpperLeft = m_Origin - Vec3(0, 0, focalLength) - viewport_X / 2 - viewport_Y / 2; // 视口左上角坐标
-    m_PixelOrigin = viewportUpperLeft + 0.5 * (m_PixelDelta_X + m_PixelDelta_Y);
+    m_ViewportUpperLeft = m_Origin - Vec3(0, 0, focalLength) - viewport_X / 2 - viewport_Y / 2; // 视口左上角坐标
+    m_PixelOrigin = m_ViewportUpperLeft + 0.5 * (m_PixelDelta_X + m_PixelDelta_Y);
+}
+
+Ray Camera::GetRay(int i, int j) const {
+    Point3 pixelCenter = m_ViewportUpperLeft + i * m_PixelDelta_X + j * m_PixelDelta_Y;
+    Point3 pixelSample = pixelCenter + PixelSampleSquare(); // 像素采样点
+
+    return {m_Origin, Normalize(pixelSample - m_Origin)};
+}
+
+Vec3 Camera::PixelSampleSquare() const {
+    double px = -0.5 + RandomDouble(); // [-0.5, 0.5)
+    double py = -0.5 + RandomDouble(); // [-0.5, 0.5)
+
+    return px * m_PixelDelta_X + py * m_PixelDelta_Y;
 }
