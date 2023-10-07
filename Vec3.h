@@ -8,6 +8,8 @@
 #include <iostream>
 #include <cmath>
 
+#include "Utils.h"
+
 class Vec3 {
 public:
     Vec3() : m_V{0, 0, 0} {}
@@ -52,6 +54,20 @@ public:
 
     double Length() const {
         return std::sqrt(LengthSquared());
+    }
+
+    static Vec3 Random() {
+        return {RandomDouble(), RandomDouble(), RandomDouble()};
+    }
+
+    static Vec3 Random(double min, double max) {
+        return {RandomDouble(min, max), RandomDouble(min, max), RandomDouble(min, max)};
+    }
+
+    bool NearZero() {
+        // Return true if the vector is close to zero in all dimensions.
+        const auto s = 1e-8;
+        return (std::fabs(m_V[0]) < s) && (std::fabs(m_V[1]) < s) && (std::fabs(m_V[2]) < s);
     }
 
 private:
@@ -103,6 +119,31 @@ inline Vec3 Cross(const Vec3 &u, const Vec3 &v) {
 
 inline Vec3 Normalize(Vec3 v) {
     return v / v.Length();
+}
+
+inline Vec3 Reflect(const Vec3 &v, const Vec3 &n) {
+    return v - 2 * Dot(v, n) * n;
+}
+
+inline Vec3 RandomInUnitSphere() {
+    // 生成一个单位球内的随机向量
+    while (true) {
+        Vec3 p = Vec3::Random(-1, 1);
+        if (p.LengthSquared() < 1) return p;
+    }
+}
+
+inline Vec3 RandomUnitVector() {
+    // 生成一个单位向量
+    return Normalize(RandomInUnitSphere());
+}
+
+inline Vec3 RandomInHemisphere(const Vec3 &normal) {
+    Vec3 inUnitSphere = RandomUnitVector();
+    if (Dot(inUnitSphere, normal) > 0.0) // 生成的随机反射向量在正半球中
+        return inUnitSphere;
+    else
+        return -inUnitSphere;
 }
 
 #endif //RAYTRACING_VEC3_H

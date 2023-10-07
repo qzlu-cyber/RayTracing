@@ -8,10 +8,13 @@
 #include "Interval.h"
 #include "Ray.h"
 
+class Material;
+
 class HitRecord {
 public:
     Vec3 point; // 交点
     Vec3 normal; // 法向量
+    std::shared_ptr<Material> material; // 物体材质
     double t; // 交点的 t 值
     bool frontFace; // 光线是否从正面打到物体上
 

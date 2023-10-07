@@ -28,6 +28,7 @@ bool Sphere::Hit(const Ray &ray, Interval t, HitRecord &record) const {
 
     record.t = root; // 交点的 t 值
     record.point = ray.At(record.t); // 交点
+    record.material = m_Material; // 材质
     Vec3 outwardNormal = (record.point - m_Center) / m_Radius; // 交点的法向量
     record.SetFaceNormal(ray, outwardNormal);
 
