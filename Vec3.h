@@ -125,6 +125,14 @@ inline Vec3 Reflect(const Vec3 &v, const Vec3 &n) {
     return v - 2 * Dot(v, n) * n;
 }
 
+inline Vec3 Refract(const Vec3 &uv, const Vec3 &n, double etaiOverEtat) {
+    // Snell's Law
+    double cosTheta = Dot(-uv, n);
+    Vec3 rOutParallel = etaiOverEtat * (uv + cosTheta * n);
+    Vec3 rOutPerp = -std::sqrt(std::fabs(1.0 - rOutParallel.LengthSquared())) * n;
+    return rOutParallel + rOutPerp;
+}
+
 inline Vec3 RandomInUnitSphere() {
     // 生成一个单位球内的随机向量
     while (true) {
@@ -144,6 +152,14 @@ inline Vec3 RandomInHemisphere(const Vec3 &normal) {
         return inUnitSphere;
     else
         return -inUnitSphere;
+}
+
+inline Vec3 RandomInUnitDisk() {
+    // 生成一个单位圆盘内的随机向量
+    while (true) {
+        Vec3 p = {RandomDouble(-1, 1), RandomDouble(-1, 1), 0};
+        if (p.LengthSquared() < 1) return p;
+    }
 }
 
 #endif //RAYTRACING_VEC3_H
