@@ -47,8 +47,9 @@ Ray Camera::GetRay(int i, int j) const {
     Point3 pixelSample = pixelCenter + PixelSampleSquare(); // 像素采样点
 
     Point3 rayOrigin = (m_DefocusAngle > 0) ? DefocusDiskSample() : m_Origin; // 光线的原点
+    double rayTime = RandomDouble(); // 发出光线的时间
 
-    return {rayOrigin, Normalize(pixelSample - rayOrigin)};
+    return {rayOrigin, Normalize(pixelSample - rayOrigin), rayTime};
 }
 
 Vec3 Camera::PixelSampleSquare() const {

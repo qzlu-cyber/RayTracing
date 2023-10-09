@@ -10,7 +10,8 @@
 /// \param record 记录交点信息
 /// \return 光线是否与球体相交
 bool Sphere::Hit(const Ray &ray, Interval t, HitRecord &record) const {
-    Vec3 oc = ray.Origin() - m_Center; // 球心到光线原点的向量
+    Point3 center = (m_IsMoving) ? Center(ray.Time()) : m_Center1; // 计算球心在某一时刻的位置
+    Vec3 oc = ray.Origin() - center; // 球心到光线原点的向量
     double a = ray.Direction().LengthSquared(); // 光线方向的长度的平方
     double half_b = Dot(oc, ray.Direction());
     double c = oc.LengthSquared() - m_Radius * m_Radius;
@@ -29,9 +30,18 @@ bool Sphere::Hit(const Ray &ray, Interval t, HitRecord &record) const {
     record.t = root; // 交点的 t 值
     record.point = ray.At(record.t); // 交点
     record.material = m_Material; // 材质
-    Vec3 outwardNormal = (record.point - m_Center) / m_Radius; // 交点的法向量
+    Vec3 outwardNormal = (record.point - center) / m_Radius; // 交点的法向量
     record.SetFaceNormal(ray, outwardNormal);
 
     return true;
+}
+
+Point3 Sphere::Center(double time) const {
+    return m_Center1 + time * m_CenterVector; // 计算球心在某一时刻的位置
+}
+
+AABB Sphere::GetAABB() const {
+    Point3 center = (m_IsMoving) ? Center(0) : m_Center1; // 计算球心在某一时刻的位置
+    return AABB(center - m_Radius, center + m_Radius); // 计算包围盒
 }
 

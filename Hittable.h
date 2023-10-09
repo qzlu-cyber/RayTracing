@@ -7,6 +7,7 @@
 
 #include "Interval.h"
 #include "Ray.h"
+#include "AABB.h"
 
 class Material;
 
@@ -29,6 +30,8 @@ public:
     virtual ~Hittable() = default;
 
     virtual bool Hit(const Ray &ray, Interval t, HitRecord &record) const = 0;
+    virtual AABB GetAABB() const = 0;
+//    virtual AABB GetAABB() const;
 };
 
 #endif //RAYTRACING_HITTABLE_H

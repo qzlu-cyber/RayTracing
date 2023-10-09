@@ -87,8 +87,16 @@ inline Vec3 operator+(const Vec3 &u, const Vec3 &v) {
     return {u.x() + v.x(), u.y() + v.y(), u.z() + v.z()};
 }
 
+inline Vec3 operator+(const Vec3 &v, double t) {
+    return {v.x() + t, v.y() + t, v.z() + t};
+}
+
 inline Vec3 operator-(const Vec3 &u, const Vec3 &v) {
     return {u.x() - v.x(), u.y() - v.y(), u.z() - v.z()};
+}
+
+inline Vec3 operator-(const Vec3 &v, double t) {
+    return {v.x() - t, v.y() - t, v.z() - t};
 }
 
 inline Vec3 operator*(const Vec3 &u, const Vec3 &v) {
@@ -105,6 +113,14 @@ inline Vec3 operator*(const Vec3 &v, double t) {
 
 inline Vec3 operator/(Vec3 v, double t) {
     return (1 / t) * v;
+}
+
+inline Vec3 Min(const Vec3 &u, const Vec3 &v) {
+    return {std::fmin(u.x(), v.x()), std::fmin(u.y(), v.y()), std::fmin(u.z(), v.z())};
+}
+
+inline Vec3 Max(const Vec3 &u, const Vec3 &v) {
+    return {std::fmax(u.x(), v.x()), std::fmax(u.y(), v.y()), std::fmax(u.z(), v.z())};
 }
 
 inline double Dot(const Vec3 &u, const Vec3 &v) {

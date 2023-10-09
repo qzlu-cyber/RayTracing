@@ -12,6 +12,7 @@
 #include "HittableList.h"
 #include "Camera.h"
 #include "Material.h"
+#include "Scene.h"
 
 class Renderer {
 public:
@@ -21,10 +22,10 @@ public:
 
     ~Renderer();
 
-    void Render(int width, int height, Camera camera, const Hittable &world);
+    void Render(int width, int height, Camera camera, const Scene &scene);
 
 private:
-    Color RayColor(const Ray &ray, const Hittable &world);
+    Color RayColor(const Ray &ray, const Scene &scene);
 
     static double GammaCorrection(double linearColor);
 

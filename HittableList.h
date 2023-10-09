@@ -20,7 +20,17 @@ public:
 
     void Add(const std::shared_ptr<Hittable>& object) { m_Objects.push_back(object); }
 
+    bool IsEmpty() const { return m_Objects.empty(); }
+
+    size_t Size() const { return m_Objects.size(); }
+
     bool Hit(const Ray &ray, Interval t, HitRecord &record) const override;
+
+    AABB GetAABB() const override;
+
+    std::shared_ptr<Hittable> operator[](size_t index) const { return m_Objects[index]; }
+
+    std::vector<std::shared_ptr<Hittable>> GetObjects() const { return m_Objects; }
 
 private:
     std::vector<std::shared_ptr<Hittable>> m_Objects; // 存储所有物体

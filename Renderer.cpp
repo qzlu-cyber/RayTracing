@@ -11,7 +11,7 @@ Renderer::~Renderer() {
     m_Out.close();
 }
 
-void Renderer::Render(int width, int height, Camera camera, const Hittable &world) {
+void Renderer::Render(int width, int height, Camera camera, const Scene &scene) {
     m_Out << "P3\n" << width << ' ' << height << "\n255\n";
     for (int j = 0; j < height; ++j) {
         std::clog << "\rScanline's remaining: " << (height - j) << ' ' << std::flush;
@@ -19,7 +19,7 @@ void Renderer::Render(int width, int height, Camera camera, const Hittable &worl
             Color pixelColor(0, 0, 0);
             for (int s = 0; s < m_SamplesPerPixel; ++s) {
                 Ray ray = camera.GetRay(i, j);
-                pixelColor += RayColor(ray, world);
+                pixelColor += RayColor(ray, scene);
             }
             WriteColor(pixelColor);
         }
@@ -27,7 +27,7 @@ void Renderer::Render(int width, int height, Camera camera, const Hittable &worl
     std::clog << "\rDone.                 \n";
 }
 
-Color Renderer::RayColor(const Ray &ray, const Hittable &world) {
+Color Renderer::RayColor(const Ray &ray, const Scene &scene) {
     if (m_Depth <= 0) {
         return {0, 0, 0};
     }
@@ -36,7 +36,7 @@ Color Renderer::RayColor(const Ray &ray, const Hittable &world) {
     // 当光线与物体相交时，计算得出的交点 (record.point) 因为浮点数的精度可能会有一个微小的偏移
     // 这就可能导致反射的光线的原点可能偏离物体表面。如果光线的原点在物体表面之下，那么就会导致
     // 光线与物体再次相交，忽略与计算出的交点非常接近的命中点可以解决此问题。
-    if (world.Hit(ray, Interval(0.001, Infinity), record)) {
+    if (scene.Hit(ray, Interval(0.001, Infinity), record)) {
         Ray scattered ; // 反射光线
         Color attenuation; // 衰减
 
@@ -45,7 +45,7 @@ Color Renderer::RayColor(const Ray &ray, const Hittable &world) {
             int depth = m_Depth;
             // 递归调用，每次递归深度减一
             --m_Depth;
-            Color color = attenuation * RayColor(scattered, world);
+            Color color = attenuation * RayColor(scattered, scene);
             // 恢复递归深度
             m_Depth = depth;
 

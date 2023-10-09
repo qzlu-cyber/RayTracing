@@ -23,7 +23,7 @@ public:
         Vec3 scatterDirection = record.normal + RandomUnitVector(); // 生成随机漫反射方向
         if (scatterDirection.NearZero()) // 防止生成的随机单位向量与法线向量正好相反
             scatterDirection = record.normal; // 如果随机漫反射方向为 0 向量，则将其设置为法向量
-        scattered = Ray(record.point, scatterDirection); // 生成漫反射光线
+        scattered = Ray(record.point, scatterDirection, ray.Time()); // 生成漫反射光线
 
         attenuation = m_Albedo; // 漫反射光线衰减率
 
@@ -40,7 +40,7 @@ public:
 
     bool Scatter(const Ray &ray, const HitRecord &record, Color &attenuation, Ray &scattered) const override {
         Vec3 reflected = Reflect(Normalize(ray.Direction()), record.normal); // 计算反射光线的方向
-        scattered = Ray(record.point, reflected + m_Fuzz * RandomUnitVector()); // 生成反射光线，并将反射光线方向进行微调，从而实现模糊效果
+        scattered = Ray(record.point, reflected + m_Fuzz * RandomUnitVector(), ray.Time()); // 生成反射光线，并将反射光线方向进行微调，从而实现模糊效果
 
         attenuation = m_Albedo; // 反射光线衰减率
 
@@ -69,7 +69,7 @@ public:
             direction = Reflect(Normalize(ray.Direction()), record.normal);
         else direction = Refract(Normalize(ray.Direction()), record.normal, refractionRatio); // 如果没有发生全反射，则计算折射光线的方向
 
-        scattered = Ray(record.point, direction); // 生成散射光线
+        scattered = Ray(record.point, direction, ray.Time()); // 生成散射光线
 
         return true;
     }
